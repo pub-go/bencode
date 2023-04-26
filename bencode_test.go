@@ -18,6 +18,9 @@ func TestBencode(t *testing.T) {
 		{name: "string/ascii", args: bencode.String("spam"), want: "4:spam"},
 		{name: "string/emoji", args: bencode.String("⭕️"), want: "6:⭕️"}, // [54 58 226 173 149 239 184 143]
 		{name: "string/cn", args: bencode.String("你好"), want: "6:你好"},    // [54 58 228 189 160 229 165 189]
+		{name: "string/not-utf8", args: bencode.String([]byte{111, 222}), want: "2:o\xde"},
+		{name: "string/base64", args: bencode.String("b94="), want: "4:b94="},
+		{name: "string/base64", args: bencode.String("b'b94='"), want: "7:b'b94='"},
 		{name: "int", args: bencode.Integer(0), want: "i0e"},
 		{name: "int-0", args: bencode.Integer(-0), want: "i0e"},
 		{name: "int1", args: bencode.Integer(1), want: "i1e"},
@@ -32,6 +35,7 @@ func TestBencode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := bencode.Encode(tt.args)
+			t.Logf("Encode(%s) = %q", tt.args, got)
 			if string(got) != tt.want {
 				t.Errorf("Encode() = %s, want = %s", got, tt.want)
 			}
