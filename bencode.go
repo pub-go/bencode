@@ -6,20 +6,24 @@ import (
 	"sort"
 )
 
-type Bencode interface {
+func Encode(v Value) []byte {
+	return v.Encode()
+}
+
+type Value interface {
 	Encode() []byte
 }
 
 type String string
 type Integer int64
-type List []Bencode
-type Dict map[String]Bencode
+type List []Value
+type Dict map[String]Value
 
 var (
-	_ Bencode = String("")
-	_ Bencode = Integer(0)
-	_ Bencode = List{}
-	_ Bencode = Dict{}
+	_ Value = String("")
+	_ Value = Integer(0)
+	_ Value = List{}
+	_ Value = Dict{}
 )
 
 func (s String) Encode() []byte {

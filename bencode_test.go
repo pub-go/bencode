@@ -1,6 +1,7 @@
 package bencode_test
 
 import (
+	"reflect"
 	"testing"
 
 	"code.gopub.tech/bencode"
@@ -10,7 +11,7 @@ func TestBencode(t *testing.T) {
 	t.Logf("lne(%s)=%d", "你好", len("你好")) // lne(你好)=6
 	var tests = []struct {
 		name string
-		args bencode.Bencode
+		args bencode.Value
 		want string
 	}{
 		{name: "string/empty", args: bencode.String(""), want: "0:"},
@@ -30,9 +31,16 @@ func TestBencode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.args.Encode()
+			got := bencode.Encode(tt.args)
 			if string(got) != tt.want {
 				t.Errorf("Encode() = %s, want = %s", got, tt.want)
+			}
+			value, err := bencode.Decode(got)
+			if err != nil {
+				t.Errorf("Decode fail: %+v", err)
+			}
+			if !reflect.DeepEqual(value, tt.args) {
+				t.Errorf("Decode error: got=%v, want=%v", value, tt.args)
 			}
 		})
 	}
