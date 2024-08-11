@@ -2,7 +2,6 @@ package bencode
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"sort"
 	"strconv"
@@ -37,22 +36,7 @@ func (s String) Encode() []byte {
 }
 
 func (s String) String() string {
-	var str = string(s)
-	if !IsUTF8(s) {
-		str = base64.StdEncoding.EncodeToString([]byte(s))
-		// str = fmt.Sprintf("b'%s'", str) // is this needed? 为了打印时区分
-		// 删除上行注释，会这样打印，打印时可以区分出 []byte 和 base64 的 string
-		// []byte{111, 222}  / Encode("b'b94='") = "2:o\xde"
-		// string("b94=")    / Encode("b94=") = "4:b94="
-		// 但多加一层也没啥区分作用
-		// string("b'b94='") / Encode("b'b94='") = "7:b'b94='"
-
-		// 不使用 b'' 包裹时，会这样打印，就这样吧
-		// []byte{111, 222}  / Encode("b94=") = "2:o\xde"
-		// string("b94=")    / Encode("b94=") = "4:b94="
-		// string("b'b94='") / Encode("b'b94='") = "7:b'b94='"
-	}
-	return strconv.Quote(str)
+	return strconv.Quote(string(s))
 }
 
 func (i Integer) Encode() []byte {

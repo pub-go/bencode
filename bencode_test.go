@@ -49,3 +49,6 @@ func TestBencode(t *testing.T) {
 		})
 	}
 }
+func TestPrint(t *testing.T) {
+	t.Logf("%s", bencode.String("你\xde好⭕️"))
+}
