@@ -8,18 +8,27 @@ import (
 	"strings"
 )
 
+// Encode 对值进行 bencode 编码
 func Encode(v Value) []byte {
 	return v.Encode()
 }
 
+// Value 接口表示支持 bencode 编码的值
 type Value interface {
 	fmt.Stringer // for print purpose
 	Encode() []byte
 }
 
+// String 字节串
 type String string
+
+// Integer 整数
 type Integer int64
+
+// List 列表
 type List []Value
+
+// Dict 字典
 type Dict map[String]Value
 
 var (
@@ -30,7 +39,7 @@ var (
 )
 
 func (s String) Encode() []byte {
-	data := []byte(s) // 不直接对 String 使用 %s 输出，否则会调用到 String() 方法
+	data := string(s) // 不直接对 String 使用 %s 输出，否则会调用到 String() 方法
 	// 这里需要直接输出内容，不需要 String() 里的转义逻辑
 	return []byte(fmt.Sprintf("%d:%s", len(data), data))
 }
@@ -49,11 +58,11 @@ func (i Integer) String() string {
 
 func (l List) Encode() []byte {
 	var buf bytes.Buffer
-	buf.WriteRune('l')
+	buf.WriteRune(ListStart)
 	for _, item := range l {
 		buf.Write(item.Encode())
 	}
-	buf.WriteRune('e')
+	buf.WriteRune(End)
 	return buf.Bytes()
 }
 
@@ -85,12 +94,12 @@ func (d Dict) Range(fn func(index int, key String, value Value)) {
 
 func (d Dict) Encode() []byte {
 	var buf bytes.Buffer
-	buf.WriteRune('d')
+	buf.WriteRune(DictStart)
 	d.Range(func(_ int, key String, value Value) {
 		buf.Write(key.Encode())
 		buf.Write(value.Encode())
 	})
-	buf.WriteRune('e')
+	buf.WriteRune(End)
 	return buf.Bytes()
 }
 

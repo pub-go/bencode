@@ -8,7 +8,7 @@ import (
 )
 
 func TestBencode(t *testing.T) {
-	t.Logf("lne(%s)=%d", "你好", len("你好")) // lne(你好)=6
+	t.Logf("len(%s)=%d", "你好", len("你好")) // len(你好)=6
 	var tests = []struct {
 		name string
 		args bencode.Value

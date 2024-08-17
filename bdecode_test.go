@@ -41,7 +41,8 @@ func TestDecode(t *testing.T) {
 		{name: "dict-key-invalid2", args: args{[]byte(`d:`)}, want: nil, wantErr: true},
 		{name: "dict-value-invalid", args: args{[]byte(`d1:a`)}, want: nil, wantErr: true},
 		{name: "dict-value-invalid2", args: args{[]byte(`d1:a1`)}, want: nil, wantErr: true},
-		{name: "dic-ok", args: args{[]byte(`d1:a1:ae`)}, want: Dict{String("a"): String("a")}, wantErr: false},
+		{name: "dict-dup-key", args: args{[]byte(`d1:a1:a1:a1:be`)}, want: nil, wantErr: true},
+		{name: "dict-ok", args: args{[]byte(`d1:a1:ae`)}, want: Dict{String("a"): String("a")}, wantErr: false},
 		{name: "too-long", args: args{[]byte(`1:abc`)}, want: nil, wantErr: true},
 	}
 	for _, tt := range tests {
